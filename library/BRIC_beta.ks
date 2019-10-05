@@ -73,7 +73,7 @@ function warp_to{
 	local warptime is time:seconds+time_from_now.
 	wait 5.
 	warpto(warptime).
-	wait until kuniverse:timewarp:issettled and warp=0.  
+	wait until time:seconds >=warptime.  
 }
 
 global orbital_velocity is{
