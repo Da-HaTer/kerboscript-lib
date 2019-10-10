@@ -207,7 +207,6 @@ if burntime(circularize_dv)>eta:apoapsis{
 }
 else execute_maneuver(circularization(circularize_dv))
 
-
 //Aproach #3
 // in theory should be most effecient path 
 // requires trajectory tunning and calculation, specific requirments etc.. otherwise coast implement
