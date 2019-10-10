@@ -187,12 +187,15 @@
         wait 0.001.    
     }
 
-    //follow ascent path
-    //when apoapsis >70000
-    //keep apoapsis constant
-    //if eta apoapsis <30 try to pitch up to keep it above 30 
-    //beware of sudden change
 }
+//Aproach #1 
+//pid loops + if else conditions
+
+//result : blind af
+
+
+//Aproach #2
+//control burntimes only (no trajectory control)
 
 lock orbit_velocity to sqrt(mu()/ship:orbit:semimajoraxis).
 lock apoapsis_velocity to velocityat(ship,time:seconds+eta:apoapsis):orbit.
@@ -202,20 +205,12 @@ if burntime(circularize_dv)>eta:apoapsis{
     //do what you do
     
 }
-
-// even if that worked need to account for curviture (how much kerbin curves if we move certain speed)(can calculate apoapsis on 
-//opposit side using current altitude and velocity)
-
-//derivative of centripital force ?? centriptial acceleration ??
-//how that helps ? -- predict path ??
 else execute_maneuver(circularization(circularize_dv))
 
 
-
-//stability enhancers clamps
-
-
-
+//Aproach #3
+// in theory should be most effecient path 
+// requires trajectory tunning and calculation, specific requirments etc.. otherwise coast implement
 window()
 launch(sma,inclination)
     countdown 
@@ -227,11 +222,24 @@ launch(sma,inclination)
 maneuvers()
 replace maneuvers with vectors
  
- 
-launch window
-launch
-most effecient ??
-periapsis then apoapsis
 // apoapsis then periapsis
 
+//a better and more effecient appraoch can be made by approximating desired velocity (vector) and correcting current velocity upon error (difference)
+// requirements: ship needs to have a relatively low twr to take the time to reach the desired target altitude, otherwise the desired orbital velocity will be reached while still in atmosphere
 
+//todo:
+// 1 make equation reach tgt asap (differential)
+// 2 follow fix vector 
+
+//conditions:
+// parking orbit can range from 72km to 75km 
+// no sudden reverse of vector
+
+//totest:
+// fix vector : 
+// fix upon verticalSpeed (alpha=verticalspeed*TGO/2)>> low level 
+// fix upon vector (ez+ high level)
+
+
+// twr not possible with low mass vehicle (thrust relatively high)
+// >>launch more steeper still
