@@ -1,49 +1,14 @@
-gemini spacecraft:
-0)log ship mass
-1)get to low kerbin orbit (90 km with 80 inclination)
-1.5)log ship mass and delta v to capabilitest.txt
-2)deploy antenna  (check which entanna suitable)
-3){do we need power saving mode ?
-  1000 ec | antenna using 0.13 ec/s
-  calculate night time (probably graph it to know intervals of possible heights) give +-20 ec for steering
-  >>we have at most 645 seconds of night}
+**Meantime
+[x]Ascent script: suborbital trajectory equation & insertion loop
+[x]aerodynamic pod reentry, control descent with pid (roll control relative to com offset)
+[x]fix deltav & debug list was edited (ship:parts) (shit !)
+[x]approximate suborbital reentry trajectory mid flight (if reusable)
+[x]intercept circular orbit satellites
 
-4)can we know when to take science experiments ? (apparently yes (explore this more)) gear: run experiments.¨brakes: reset experiments.
-
-5)deorbit burn
-	can we estimate when to deorbit so we fall near and ahead of ksc
-	or should we use trajectories mod( i think it would be easier to work it out by ourselves (OPTIMISTIC !!))
-6)reentry
-	can we only control spin (without pid loop)
-	or it would be easier to estimate direction anomaly in proprtion to mass offset and build our pid(probably) 			controllers upon it
-
-//additional : heading course divergence trigger function for abort system 
---------------------------------------------------------------------------------------------------------------------------
-todo:
-test gforce pid loop:
-1)get acceleration formula
----------------------------
-test maneuver nodes:
-1)make a maneuver node
-2)warp to maneuver node time (does maneuver time be affected by thrust limit (does thrust limit affect isp or fuel flow))
-3)change eccentricity test wihout acting
-4)hardest: maneuver target intersept(precise) uses targetat() ?
-
-
-add boot library of house keeping such as orbit info and sleep(). .
-
-ksp : different values of libraries are acting globally
-
-///add automaticwarp in asent (improve )
-
-//manned : has connection , use old bootscript
-//unmanned: plan ahead ()
-
-These PID controller modes have distinct advantages and disadvantages and consequences if one mode dominates. 
-Excessive proportional action causes a faltering or hesitation, excessive integral action causes overshoot, 
-and excessive derivative action causes an oscillatory approach to setpoint
-
----------------------------------------------------------------------------------------------------
-create take off script dev/plane.ks
-
-///if a parameter is passed and it is variable it doesn't get updated, it has to be manually updated by the function
+**Advanced: 
+[x]flight telemtry and data science logging
+[x]rcs deltav and more advanced parts stage grouping stuff
+[x]hoverslam with 3 engines and startup delay time
+[x]hover navigate and land (for lunar missions)
+[x]Space shuttle launch and landing [landing,trajectory,adv ascent algo (custom pid)]
+[x]launch & intercept eleptic satellites, approximate approach with kepler laws instead, hill climb

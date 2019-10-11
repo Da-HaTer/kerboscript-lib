@@ -1,0 +1,70 @@
+woomerang (x,y)
+45deg 17 sec 24 min lat 45.29
+136deg 6 sec 36 min long 136.11 ++ some meters 
+
+ksc longitude : 285.44
+
+contracts :
+-position sattlite in spicific orbit (maneuver node) (requires boot script and network)
+-position satellite in reverse orbit (equatorial)
+
+-rescue kerman (hohman transfer (presize using aproche score ? test aproach) orbit period method (impracticle) ) 
+-rescue kerman at low orbit: test period method with a way to calculate time: don't wait until target is fading XXXXXX
+
+orbital velocity = sqrt(µ/r)
+orbital period = pi*sqrt(r^3/µ)
+escape speed = sqrt(2)* orbital velocity
+
+rtech
+wrapme{
+	SET P TO SHIP:PARTSNAMED("LongAntenna")[0].
+	SET M to p:GETMODULE("ModuleRTAntenna").
+	communotron 16:
+
+	print m:getfield("status"). //"Off" /"Conncted"
+	m:doevent("[de]activate").
+	m:allfield. ==>
+	LIST of 7 items:
+
+	[0] = "(get-only) energy, is String"
+
+	[1] = "(get-only) omni range, is String"
+
+	[2] = "(get-only) status, is String"
+
+	[3] = "(get-only) auto threshold, is String"
+
+	[4] = "(settable) deactivate at ec %, is Single"
+
+	[5] = "(settable) activate at ec %, is Single"
+
+	[6] = "(settable) target, is String | Body | Vessel"
+
+
+	dish : if activated and no target: 
+	status: "Operational"
+	status: "Connected"
+
+	M:SETFIELD("target", "Mission Control"). //mission control case sensitive.
+}
+
+
+satellite orbit parameters:
+wrapme{
+	body : radius, µ(=mass*G)
+	apoapsis \
+			  } f(sma,ecc) 
+	periapsis/ 
+
+	inclination
+
+	longitude of the ascending node
+
+	argument of periapsis
+}
+
+to prove : (does it even matter ?){
+	Density is 1.2 x e ^(alt/-5000)
+	Pressure is 1.0 x e ^(alt/-5000)
+	pressure=100*0.999816^Altitude
+}

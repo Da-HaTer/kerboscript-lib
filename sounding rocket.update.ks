@@ -16,5 +16,6 @@ wait until (altitude >=4000 and
 		altitude <=11000 and
 		abs(verticalspeed ) >=60 and 
 		abs(verticalspeed ) <=210).
-print "testconditions".
+//testconditions
+print "test conditions met".
 until stage:number= 0 stage.

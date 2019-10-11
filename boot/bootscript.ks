@@ -39,7 +39,8 @@ function upload{
 }
 global archive_file is {
 	parameter filename.
-	local destination_directory is "0:/Archive/"+shipname+"/".
+	parameter projname is shipname .
+	local destination_directory is "0:/Archive/"+projname+"/".
 	if not exists(destination_directory) and addons:rt:HASCONNECTION(ship) createDir(destination_directory).
 	upload(filename,destination_directory).
 }.
