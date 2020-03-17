@@ -25,22 +25,22 @@ global execute_maneuver is{
 	//libreq("BRIC_beta.ks").
 	if hasnode {
 		local maneuver is allnodes[0].//first upcoming node.
-		local lock maneuver_eta to maneuver:eta.
+		local maneuver_time is time:seconds+maneuver:eta.
 		local lock dir to maneuver:deltav.
-		local lock dv to dir:mag.
-		local maneuver_time is burntime(dv).
+		local dv is dir:mag.
+		local Bt is burntime(dv).
+		local lock offset to vAng(ship:facing:vector,dir).
 		lock steering to dir.
-		wait 5.// making sure we point to the node.
-		if maneuver_eta > maneuver_time/2{
-			warp_to(maneuver_eta- maneuver_time -5).
+		wait until offset <2 or time:seconds>(maneuver_time-Bt/2).// making sure we point to the node.
+		if maneuver_time- Bt> time:seconds {
+			warpto(maneuver_time- Bt-5).
 		}
-		wait until maneuver_eta<=maneuver_time/2.
-		until dv<=0.05{
-			lock throttle to dv/100+0.0001.
-			set ship:control:fore to dv+0.1. 
-		}
-		set ship:control:fore to 0.
+		wait until time:seconds > maneuver_time-Bt/2.
+		lock throttle to 1.
+		wait Bt.
 		lock throttle to 0.
+		//rcs tuning here
+		set ship:control:fore to 0.
 		unlock throttle .
 		remove maneuver.
 	}
@@ -133,7 +133,9 @@ function all_stages_deltav{
     for n in stages:keys{
         local full_mass is 0.
         local fuel_mass is 0.
-        for p in ship:parts{
+        local shiparts is list().
+        for p in ship:parts {shiparts:add(p).}
+        for p in shiparts{
             if p:stage<=n set full_mass to full_mass+p:mass.
             if p:stage=n-1{
                 for res in p:resources{
@@ -216,7 +218,7 @@ global burntime is{
     if F<>0 return G0*ship:mass*isp*(1-constant:E^(-dv/(G0*isp)))/F.
     else return 60.
 }.
-
+ 	 
 
 //toadd 
 //algorithm to split each stage from parts:list or maybe can get stage:coupled:enabled module.
