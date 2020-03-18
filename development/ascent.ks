@@ -35,22 +35,17 @@
         set angle to min(lng(interct_point_1-site_lng),lng(interct_point_2-site_lng)).
         set t to angle/kerbin:angularVel:mag*constant:degtorad.
         return t.
-    }
+    } //to improve for all inclination or make it specific
     clearscreen.
     print tgt_eta() at (0,7).
     warpto(time:seconds+tgt_eta()-15).  
-    wait 5.
-//ascent
-{
+    wait 5.    
 
-    //Parameter targetaltitude.
-    //Parameter timer is 1.
-    //parameter auzimuth
     Parameter inc is 0.
-    parameter gforce_limit is false..
+    parameter gforce_limit is false.
     parameter booster_landing is false.
     runoncepath("0:/library/bric_beta.ks").
-    
+    clearscreen.
 
     function releaseclamps{
         local clamps is list().
@@ -79,7 +74,7 @@
         if not (defined thrust){
         set thrust to 0.
         }
-        else if not(total_deltav()=0 or stage:number=1){
+        else if not( stage:number=1){//total_deltav()=0 or
             set prevthrust to thrust.
             set thrust to maxthrust .
             if thrust + 10< prevthrust or maxthrust = 0{
@@ -126,23 +121,25 @@
             if not (defined aggregate_thrust ) local aggregate_thrust is 0.
             lock throttle to aggregate_thrust.
             until throttle >=1{
-                set aggregate_thrust to aggregate_thrust+0.005.
-                wait 0.01.
+                set aggregate_thrust to aggregate_thrust+0.002.
             }//gradual throttle up
             releaseclamps().
+            lock steering to lookdirup(up:vector,heading(90,0):vector).
+            wait 5.
             set runmode to 2.
         }
         //gravity turn
         else if runmode=2{
-            if altitude >=15000 lock progvec to prograde:vector .
-            else lock progvec to srfprograde:vector .
-            local angleofalt is 90*(constant:e^((6/70000)*altitude)).
+            if altitude >=20000 local progvec is prograde:vector .
+            else local progvec is srfprograde:vector.
+            //local angleofalt is 90*constant:e^(6*altitude/70_000).
+            local angleofalt is max(-15,min(90,100*0.1^(altitude /70_000))).
             local targetvec is heading(90,angleofalt):vector.//changeme: azimuth
             local hdgvec to ship:facing:vector.
-            local correctvec is 2*targetvec-progvec.
-            local lock deviation to vectorangle(hdgvec,correctvec).
-            lock steering to lockdirup(correctvec,heading(90,0):vector).//changemeazimuth.
-            if deviation >=15{
+            local correctvec is 3*targetvec-progvec.
+            local deviation is vectorangle(hdgvec,correctvec).
+            lock steering to lookdirup(correctvec,heading(90,0):vector).//changemeazimuth.
+            if deviation >=15 and altitude>2000{
                 abortsystem().//Initiate abort sequence if we are off course 
             }
             //add abort conditon
@@ -151,30 +148,28 @@
                 set runmode to 3.
             }
         }   
+        ///accounting for difference between desired state vector and current vector
+
         //circularization
         else if runmode=3{
             //know orbital stage with deltav ?
             //do final burn 
             //apoapsis time and altitude loop then veritcal speed loop 
-            local orbit_velocity is sqrt(mu()/600_000+apoapsis)*velocityat(ship,time:seconds+eta:apoapsis):orbit:normalized.
+            local orbit_velocity is sqrt(mu()/(600_000+apoapsis))*velocityat(ship,time:seconds+eta:apoapsis):orbit:normalized.
             local apoapsis_velocity is velocityat(ship,time:seconds+eta:apoapsis):orbit.
             local circularize_dv is orbit_velocity:mag- apoapsis_velocity:mag.// deltav needed to circularize / may be in accurate assuming gravity loss
-            lock steering to orbit_velocity. //maneuver node
-            local Bt is burntime(circularize_dv).
-            if Bt/2<eta:apoapsis{
+            lock steering to lookdirup(orbit_velocity,kerbin:position). //maneuver node
+            local Bt is 9.81*ship:mass*240*(1-constant:E^(-circularize_dv/(9.81*240)))/16.
+            warpto(time:seconds+eta:apoapsis-Bt).
+            if Bt/2>eta:apoapsis{
                 lock throttle to 1.
-                wait Bt. // will generally overshoot (not a problem)
+                //wait until ship:velocity:orbit:mag >= orbit_velocity:mag. // will generally overshoot (not a problem)
+                wait bt.
                 Lock throttle to 0.
                 set runmode to 0.
             }
         }
-        else if runmode=4{
-            local tangentvec is vscrs(vcrs(prograde:vector,up:vector),up:vector).//should get target tangentvec
-            local tgt_vec is sqrt(mu()/600_000+altitude)*tangentvec.
-            local currentvec is ship:velocity:orbit.
-            local correctvec is tgt_vec-currentvec.
-            correct(correctvec)?????????????????????????????????????????????
-        }
+        ///imrpoved circulirzation method
 
         auto_rcs().
         auto_stage().
@@ -185,12 +180,25 @@
         wait 0.001.    
     }
 
+//ascent
+{
+
+    //Parameter targetaltitude.
+    //Parameter timer is 1.
+    //parameter auzimuth
+
 }
 //Aproach #1 
 //pid loops + if else conditions
 
 //result : blind af
-
+else if runmode=4{
+            local tangentvec is vscrs(vcrs(prograde:vector,up:vector),up:vector).//should get target tangentvec
+            local tgt_vec is sqrt(mu()/600_000+altitude)*tangentvec.
+            local currentvec is ship:velocity:orbit.
+            local correctvec is tgt_vec-currentvec.
+            correct(correctvec)?????????????????????????????????????????????
+        }
 
 //Aproach #2
 //control burntimes only (no trajectory control)
