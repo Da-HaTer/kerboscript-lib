@@ -1,0 +1,18 @@
+1: init angle=aproximate (suppose after TGO V=vT,)
+2: turn rate constant= aoa/btime
+
+always check if eta apoapsis > btime ( throttle cut condition)
+
+1-assume ( steer to init)
+function(integrate):overshot/undershot  (virtual states (do not steer to because time so fast )
+
+2- assume ( z(t0,aoa0) only)
+integrate (a, v,t using z(t0) )(modify a0 v0 z	0)
+correct (either increase or decrease aoa) 
+assume (z(t0,aoa0)
+until orbital vel > TGT 
+
+copypath("0:/development/ascent/roll_program.ks","").
+copypath("0:/development/ascent/closed_loop.ks","").
+copypath("0:/development/ascent/open_loop.ks","").
+runpath("roll_program.ks").

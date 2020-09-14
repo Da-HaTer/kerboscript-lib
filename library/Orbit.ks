@@ -2,7 +2,7 @@
 @lazyglobal off.
 global lng is{ 
 	parameter x. 
-	return mod(x+360000,360).
+	return mod(x+3600,360).
 }.
 global orbitable is{
 	parameter name.
@@ -20,6 +20,46 @@ global orbitable is{
 	return vessel(name).
 }.
 
+local angular_vel is{
+	parameter lan is orbit:lan.
+	parameter inc is orbit:inclination.
+	local A is V(cos(lan),0,sin(lan)).
+	local B is V(sin(lan)*cos(inc),sin(inc),-cos(lan)*cos(inc)).
+	return vcrs(A,B-A).
+}.
+
+global trueanomaly is {
+	parameter Ec.
+	parameter e is orbit:Eccentricity.
+    return arctan2(sqrt(1-e^2)*sin(Ec),(cos(Ec)-e)).
+}.
+
+global Eccentricanomaly is{
+	parameter T is orbit:trueanomaly.
+	parameter e is orbit:Eccentricity.
+    return arctan2(sqrt(1-e^2)*sin(T),(cos(T)+e)).
+}.
+global Meananomaly is {
+	parameter En is Eccentricanomaly().
+	parameter e is orbit:Eccentricity.
+	return (constant:degtprad*En-e*sin(En))*constant:radtodeg.
+}
+global Eccentricanomaly2 is{
+	parameter M is Meananomaly().
+	parameter e is e.
+	set M TO M*constant:degtorad.
+	local x is 0.
+	local step_ is 1.
+	local last_error is abs(M-constant:degtorad*x+e*sin(x)).
+	local error is 0.
+	until abs(step_)<1e-6{
+		set x to x+step_.
+	    set error to abs(M-constant:degtorad*x+e*sin(x)).
+	    if last_error < error set step_ to -step_/5.
+	    set last_error to error.
+	}
+	return x.
+}.
 global anomaly_eta is{
     parameter trueanomaly.
     local t0 is 0.
@@ -35,7 +75,7 @@ global anomaly_eta is{
     local M0 is (constant:degtorad*E0-ecc *sin(E0)).
     local M is (constant:degtorad*E-ecc*sin(E)).
     
-    local t is t0+ (M-M0)/n.
+    local t is t0+(M-M0)/n.
     if t<0 set t to t+Per.
     return t.
 }.
