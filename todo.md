@@ -2,7 +2,8 @@
 - [ ] Ascent script: suborbital trajectory equation & insertion loop
     - [x] Launch window time precision (target orbit)
     - [x] implement launch azimuth calculation (from python script)
-    - [ ] roll program & pitch program (next gen guidance)
+    - [x] roll program & pitch program 
+    - [ ] attitude control using pid loops (next gen guidance) for precision and to keep aoa at 0.
     - [ ] account for insufficient burn time to circularize (staging calcs)
 - [x] fix deltav & debug list was edited (ship:parts) (shit !)
 - [ ] rcs deltav and more advanced parts stage grouping stuff

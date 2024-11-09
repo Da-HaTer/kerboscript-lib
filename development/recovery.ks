@@ -19,13 +19,13 @@ parameter guided is true.
 wait until addons:rt:HASCONNECTION(ship).
 //copypath("0:/library/bric_beta.ks","").
 runoncepath("0:/library/bric_beta.ks").
-local start_time is time:seconds.
+
 clearscreen.
 if hastarget local tgt is latlng(target:latitude,target:longitude).	
-else if guided local tgt is latlng(-0.0972030237317085,-74.5576019287109). //launcpad 
+else if guided local tgt is latlng(-0.0972030237317085,-74.5576019287109). //launchpad coordinates 
 //else global tgt is latlng(-0.0978078842163086,-74.6201782226563). //launcpad
 local lock ground_distance to (tgt:position-latlng(latitude ,longitude ):position):mag .
-local ship_height is vessel_height().
+local ship_height is vessel_height(). //bric beta
 local lock realaltitude to alt:radar-ship_height.
 local lock maxacc to ship:availablethrust/ship:mass.
 local lock v to sqrt(ship:verticalspeed^2+ship:groundspeed^2).
@@ -61,7 +61,7 @@ function boostback_and_brake{
 		lock throttle to 0.
 	}
 	//new part
-	lock steering to steering_control() .
+	lock steering to lookdirup(steering_control(),heading(90,0):vector).
 }
 function suicide_burn{
 	wait until impact_time() <= deceleration_time() and alt:radar<=5000.
@@ -132,17 +132,14 @@ function head_for{
 	// locking steering to a diretion of 1+1=>45deg
 }
 main().
-wait until verticalspeed <=1 and verticalspeed >= -1 and alt:radar <200.
-log time:seconds- start_time to ("0:/mylogs.txt").
-lock steering  to up.
-wait 5.
+wait until abs(verticalspeed) <=1 and alt:radar <200.
+//log time:seconds- start_time to ("0:/mylogs.txt").// time took
+wait 2.
 
-//remember what i told u about my landing script
-//it can't guess actual landing position because calculations including aerodynamics are hard af
-//but it makes a rough estimate and relies on aerodynamic guidance to get there
-//well that turns out to be inaccurate
-//what i have in mind is increase boostback velocity by some factor  so the virtual landing point skips the targeted area
-//but then i implement a braking burn just like irl because i've been getting some thermal effects but mainly to improve trajectory
-
-//TODO : IMPORTANT
-//keep in mind attack angle to find horizental force and then guess burntime and time to pass above site 
+// todo:
+// better turn with rcs
+// confined rotation
+//keep apoapsis higher than retroburn phase
+// newtonian trajectory: earth rotation + velocity & acceleration
+// overshoot then simple brake burn (keep an eye on fuel)
+// can we calculate fuel consumption while integrating ??

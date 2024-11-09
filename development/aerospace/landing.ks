@@ -83,7 +83,7 @@ function vector_seek{
     //meant to be run inside a loop
     parameter paramvector.
     parameter priority is 1.//1 no yaw //2 lock roll to 0 and rely on yaw(risky)
-    parameter maxrollangle is 60.
+    parameter maxrollangle is 40.
     parameter maxpitchangle is 30.
     
     sas off.

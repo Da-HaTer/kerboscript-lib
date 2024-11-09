@@ -72,21 +72,11 @@ function z{
 local theta0 is 90-vang(ship:facing:vector,up:vector). // angle of attack
 local lock dv to orbital_vel-ship:velocity:orbit:mag.
 local lock TGO to burntime(dv).// burntime function
-local w is 0.5.
+function integrate{
+	parameter alpha.
+	parameter w.
 
-local last_score is 0.
-
-local overshot is false.
-lock impossible to theta0>90.
-until (dv<=0 ){ //edit me or impossible
-	if overshot set theta0 to max(-10,theta0-0.2).
-	else set theta0 to min(45,theta0+0.2).
-	print "angle: "+theta0 at (0,5).
-	local t0 is time:seconds.
-	lock steering to z(w,theta0,time:seconds-t0)..
 	clearVecDraws().
-	
-	//initial states of vehicle
 	local R0 is -kerbin:position.
 	local v0 is ship:velocity:orbit.
 	local Th0 is max(1,ship:availablethrust/ship:mass).
@@ -106,17 +96,21 @@ until (dv<=0 ){ //edit me or impossible
 		set V0 to v.
 		set TH0 to TH.
 		SET a0 To a.
-	}//big interation (make a function somehow and aproximate maybe)
-	set penalty to 1/abs(R0:mag-orbit_rad).
-	print "TGO: "+vtime at (0,8).
-	set overshot to R0:mag>orbit_rad.
-	set w to theta0/(1.5*vtime).
+	} // virtual trajectory integration
+	return min(1,1/abs(R:mag-orbit_rad))+vdot(R0,v0). // score from 0 to 2
+}
+
+local alpha0 is 40.
+local w0 is 0.1.
+until dv<=0{
+	local t0 is time:seconds.
+	lock steering to z(w0,theta0,time:seconds-t0).
+	local f0 is integrate(alpha0,w0).
+	local df_dalpha is integrate(alpha0+0.1,w0)-f0.
+	local df_dw is integrate(alpha0,w0+0.1)-f0.
+	set alpha0 to alpha0 +df_dalpha.
+	set w0 to w0+df_dw.
 }
 lock throttle to 0.
-
 //todo : if it works: add yaw program
-
-
-
-set score to min(1,1/R)+vdot(R0,v0). // max score is 2.
 
