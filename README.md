@@ -38,7 +38,7 @@ The project is currently **on hold**, with plans to revisit in the future, and w
     <img src="https://github.com/user-attachments/assets/398e8900-15cc-4391-a230-066ac7a6e78a" alt="Autopilot System" width="300" >
   </a>
 
-- **SpaceX Style Landing System Demo**  
+- **SpaceX Style Launch and Landing**  
   <a href="https://www.youtube.com/watch?v=RjdYkuKnw3U" target="_blank">
     <img src="https://github.com/user-attachments/assets/35821510-bf1c-4fbd-b4bb-f7c94cbfab00" alt="Landing System" width="300" >
   </a>
